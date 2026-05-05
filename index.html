@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gym Planner App</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  background:linear-gradient(135deg,#0f172a,#020617);
+  color:#fff;
+  padding:20px;
+}
+
+/* HEADER */
+h1{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+/* PROGRESS */
+.progress-box{
+  margin-bottom:20px;
+}
+
+.bar{
+  height:10px;
+  background:#1e293b;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.fill{
+  height:100%;
+  background:linear-gradient(90deg,#22c55e,#4ade80);
+  width:0%;
+  transition:0.3s;
+}
+
+/* WEEK */
+.week{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:10px;
+  margin:20px 0;
+}
+
+.day{
+  padding:10px;
+  text-align:center;
+  border-radius:10px;
+  background:#020617;
+  border:1px solid rgba(255,255,255,0.1);
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.day.active{
+  background:#22c55e;
+  color:#000;
+  box-shadow:0 0 10px #22c55e;
+}
+
+/* STREAK */
+.streak{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.streak h2{
+  color:#22c55e;
+}
+
+/* CARDS */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:15px;
+}
+
+.card{
+  background:rgba(255,255,255,0.05);
+  padding:15px;
+  border-radius:15px;
+}
+
+.exercise{
+  font-size:12px;
+  opacity:0.8;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🏋️ Gym Planner</h1>
+
+<div class="streak">
+  <p>Current Streak</p>
+  <h2 id="streak">0 🔥</h2>
+</div>
+
+<div class="progress-box">
+  <p>Weekly Progress</p>
+  <div class="bar">
+    <div class="fill" id="progress"></div>
+  </div>
+</div>
+
+<div class="week" id="week">
+  <div class="day">Mon</div>
+  <div class="day">Tue</div>
+  <div class="day">Wed</div>
+  <div class="day">Thu</div>
+  <div class="day">Fri</div>
+  <div class="day">Sat</div>
+  <div class="day">Sun</div>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <h3>Push Day</h3>
+    <div class="exercise">Bench Press</div>
+    <div class="exercise">Shoulder Press</div>
+  </div>
+
+  <div class="card">
+    <h3>Pull Day</h3>
+    <div class="exercise">Pull-ups</div>
+    <div class="exercise">Deadlift</div>
+  </div>
+
+  <div class="card">
+    <h3>Leg Day</h3>
+    <div class="exercise">Squats</div>
+    <div class="exercise">Lunges</div>
+  </div>
+</div>
+
+<script>
+
+const days = document.querySelectorAll('.day');
+const progress = document.getElementById('progress');
+const streakText = document.getElementById('streak');
+
+// Load saved data
+let completed = JSON.parse(localStorage.getItem('gymDays')) || [];
+
+// Apply saved state
+days.forEach((day, index) => {
+  if(completed.includes(index)){
+    day.classList.add('active');
+  }
+
+  day.addEventListener('click', () => {
+    day.classList.toggle('active');
+
+    if(day.classList.contains('active')){
+      completed.push(index);
+    } else {
+      completed = completed.filter(i => i !== index);
+    }
+
+    localStorage.setItem('gymDays', JSON.stringify(completed));
+    updateUI();
+  });
+});
+
+function updateUI(){
+  let count = completed.length;
+
+  // Progress %
+  let percent = (count / 7) * 100;
+  progress.style.width = percent + "%";
+
+  // Streak (simple count)
+  streakText.innerText = count + " 🔥";
+}
+
+updateUI();
+
+</script>
+
+</body>
+</html>
